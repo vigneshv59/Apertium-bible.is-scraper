@@ -25,22 +25,23 @@ end
 
 bible_url = options[:url]  || "http://www.bible.is/ENGESV/2Pet/3"
 page_exists = true
-output = ""
-
-while page_exists
-  page = Nokogiri::HTML(open(bible_url))
-  a = page.css(".verse-container")
-  output << page.xpath('.//*[@class="chapter-title"]').text << "\n"
-  a.each do |v|
-    output << v.xpath('.//*[@class="verse-marker"]').text << " "
-    output << v.xpath('.//*[@class="verse-text"]').text << "\n"
-  end
-  
-  bible_url = page.at_css(".chapter-nav-right")["href"]
-  
-  page_exists = false if bible_url.nil? || bible_url.empty?
-end
 
 open(options[:out] || "out.txt", "w") do |f|
-  f.puts output
+  while page_exists
+    page = Nokogiri::HTML(open(bible_url))
+    a = page.css(".verse-container")
+    ch_title = page.xpath('.//*[@class="chapter-title"]').text
+    
+    f.puts ch_title << "\n"
+    puts(ch_title)
+    
+    a.each do |v|
+      f.puts v.xpath('.//*[@class="verse-marker"]').text << " "
+      f.puts v.xpath('.//*[@class="verse-text"]').text << "\n"
+    end
+  
+    bible_url = page.at_css(".chapter-nav-right")["href"]
+  
+    page_exists = false if bible_url.nil? || bible_url.empty?
+  end
 end
