@@ -32,7 +32,6 @@ while page_exists
   a = page.css(".verse-container")
   output << page.xpath('.//*[@class="chapter-title"]').text << "\n"
 
-  puts a[0].xpath('.//*[@class="verse-text"]')
   a.each do |v|
     output << v.xpath('.//*[@class="verse-marker"]').text << " "
     output << v.xpath('.//*[@class="verse-text"]').text << "\n"
