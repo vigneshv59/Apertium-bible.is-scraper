@@ -10,7 +10,7 @@ optparse = OptionParser.new do |opts|
     options[:url] = u
   end
   
-  opts.on("-oOUTPUT", "--url=OUTPUT", "The out file name. (Mandatory)") do |o|
+  opts.on("-oOUTPUT", "--out=OUTPUT", "The out file name. (Mandatory)") do |o|
     options[:out] = o
   end
 end
