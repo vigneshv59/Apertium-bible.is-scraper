@@ -3,13 +3,25 @@ require 'open-uri'
 require 'optparse'
 
 options = {}
-OptionParser.new do |opts|
+optparse = OptionParser.new do |opts|
   opts.banner = "Usage: example.rb [options]"
 
-  opts.on("-uURL", "--url=URL", "The bible.is URL for the bible.") do |u|
+  opts.on("-uURL", "--url=URL", "The bible.is URL for the bible. (Mandatory)") do |u|
     options[:url] = u
   end
-end.parse!
+  
+  opts.on("-oOUTPUT", "--url=OUTPUT", "The out file name. (Mandatory)") do |o|
+    options[:out] = o
+  end
+end
+
+begin
+  optparse.parse!
+  raise OptionParser::MissingArgument if options[:url].nil? || options[:out].nil?
+rescue OptionParser::MissingArgument, OptionParser::InvalidOption
+  puts optparse
+  exit
+end
 
 bible_url = options[:url]  || "http://www.bible.is/ENGESV/2Pet/3"
 page_exists = true
@@ -31,6 +43,6 @@ while page_exists
   page_exists = false if bible_url.nil? || bible_url.empty?
 end
 
-open("output.txt", "w") do |f|
+open(options[:out] || "out.txt", "w") do |f|
   f.puts output
 end
