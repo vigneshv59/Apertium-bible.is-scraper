@@ -31,7 +31,6 @@ while page_exists
   page = Nokogiri::HTML(open(bible_url))
   a = page.css(".verse-container")
   output << page.xpath('.//*[@class="chapter-title"]').text << "\n"
-
   a.each do |v|
     output << v.xpath('.//*[@class="verse-marker"]').text << " "
     output << v.xpath('.//*[@class="verse-text"]').text << "\n"
