@@ -1,13 +1,23 @@
 require 'nokogiri'
 require 'open-uri'
+require 'optparse'
 
-bible_url = "http://www.bible.is/ENGESV/2Pet/3"
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: example.rb [options]"
+
+  opts.on("-uURL", "--url=URL", "The bible.is URL for the bible.") do |u|
+    options[:url] = u
+  end
+end.parse!
+
+bible_url = options[:url]  || "http://www.bible.is/ENGESV/2Pet/3"
 page_exists = true
 output = ""
 
 while page_exists
   page = Nokogiri::HTML(open(bible_url))
-  a = page.xpath('//*[@class="verse-container"]')
+  a = page.css(".verse-container")
   output << page.xpath('.//*[@class="chapter-title"]').text << "\n"
 
   puts a[0].xpath('.//*[@class="verse-text"]')
