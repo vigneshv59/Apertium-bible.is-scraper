@@ -26,18 +26,18 @@ end
 bible_url = options[:url]  || "http://www.bible.is/ENGESV/2Pet/3"
 page_exists = true
 
-open(options[:out] || "out.txt", "w") do |f|
+open(options[:out] || "out.txt", "w:UTF-16") do |f|
   while page_exists
-    page = Nokogiri::HTML(open(bible_url))
+    page = Nokogiri::HTML(open(bible_url).read, nil, 'UTF-8')
     a = page.css(".verse-container")
+  
     ch_title = page.xpath('.//*[@class="chapter-title"]').text
     
     f.puts ch_title << "\n"
     puts(ch_title)
     
     a.each do |v|
-      f.puts v.xpath('.//*[@class="verse-marker"]').text << " "
-      f.puts v.xpath('.//*[@class="verse-text"]').text << "\n"
+      f.puts v.xpath('.//*[@class="verse-marker"]').text << " " << v.xpath('.//*[@class="verse-text"]').text << "\n"
     end
   
     bible_url = page.at_css(".chapter-nav-right")["href"]
