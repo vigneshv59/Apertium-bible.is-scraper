@@ -14,8 +14,12 @@ optparse = OptionParser.new do |opts|
     options[:out] = o
   end
   
-  opts.on("-tTIME", "--time=TIME", "The time limit. (Optional)") do |t|
+  opts.on("-tTIME", "--time=TIME", "The time limit in seconds. (Optional)") do |t|
     options[:time] = t
+  end
+  
+  opts.on("-nVERSES", "--num=VERSES", "The verse limit. (Optional)") do |v|
+    options[:verses] = v
   end
 end
 
@@ -29,11 +33,11 @@ end
 
 bible_url = options[:url]  || "http://www.bible.is/ENGESV/2Pet/3"
 page_exists = true
-
+verses_finished = 0
 start_time = Time.now
 
 open(options[:out] || "out.txt", "w:UTF-8") do |f|
-  while page_exists && (options[:time].nil? || Time.now - start_time < options[:time].to_i)
+  while page_exists && (options[:time].nil? || Time.now - start_time < options[:time].to_i) && (options[:verses].nil? || verses_finished < options[:verses].to_i)
     page = Nokogiri::HTML(open(bible_url).read, nil, 'UTF-8')
     a = page.css(".verse-container")
   
@@ -49,5 +53,6 @@ open(options[:out] || "out.txt", "w:UTF-8") do |f|
     bible_url = page.at_css(".chapter-nav-right")["href"]
   
     page_exists = false if bible_url.nil? || bible_url.empty?
+    verses_finished = verses_finished + 1
   end
 end
